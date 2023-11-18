@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Maps Visualization</title>
+    <!-- Include the Google Maps JavaScript API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTQJJmkkyfLHl4ZGbomuxyUVu_0co6zy8&callback=initMap" async defer></script>
+    <script>
+        // Initialize the map
+        function initMap() {
+            // Default coordinates (Makerere University, Kampala)
+            const defaultCoordinates = {
+                lat: 0.3326347,
+                lng: 32.5685861
+            };
+
+            // Create a new map centered at the default coordinates
+            const map = new google.maps.Map(document.getElementById('map'), {
+                center: defaultCoordinates,
+                zoom: 30
+            });
+
+            // Handle the search button click
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                const location = document.getElementById('locationInput').value;
+
+                // Call the /getCoordinates endpoint to get the coordinates for the entered location
+                fetch(`/getCoordinates?location=${encodeURIComponent(location)}`)
+                    .then(response => response.json())
+                    .then(coordinates => {
+                        // Create a marker for the retrieved coordinates
+                        const marker = new google.maps.Marker({
+                            position: coordinates,
+                            map: map,
+                            title: 'Searched Location'
+                        });
+
+                        // Center the map on the retrieved coordinates
+                        map.setCenter(coordinates);
+                    })
+                    .catch(error => console.error(error));
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Create a div to hold the map -->
+    <div id="map" style="height: 400px;"></div>
+
+    <!-- Add a text box and a search button -->
+    <div>
+        <input type="text" id="locationInput" placeholder="Enter location">
+        <button id="searchBtn">Search</button>
+    </div>
+</body>
+
+</html>
